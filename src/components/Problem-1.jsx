@@ -1,14 +1,72 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Problem1 = () => {
     const [show, setShow] = useState('all');
+    const [data, setData] = useState({ name: '', status: '' });
+    const [allData, setAllData] = useState({
+        active: [],
+        completed: [],
+        others: []
+    })
 
 
     const handleClick = (val) => {
         setShow(val);
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        if (data.status.toLocaleLowerCase() === "active") {
+            setAllData((pre) => ({
+                ...pre,
+                active: [
+                    ...pre.active,
+                    data
+                ]
 
+            }))
+        }
+        else if (data.status.toLocaleLowerCase() === "completed") {
+            setAllData((pre) => ({
+                ...pre,
+                completed: [
+                    ...pre.completed,
+                    data
+                ]
+
+            }))
+        } else {
+            setAllData((pre) => ({
+                ...pre,
+                others: [
+                    ...pre.others,
+                    data
+                ]
+
+            }))
+        }
+
+        setData({ name: '', status: '' })
+    }
+
+
+    const SyncronizeData = () => {
+        if (show === "all") {
+            return [
+                ...allData.active,
+                ...allData.completed,
+                ...allData.others,
+            ]
+        } else if (show === "completed") {
+            return [
+                ...allData.completed,
+            ]
+        } else if (show === "active") {
+            return [
+                ...allData.active,
+            ]
+        }
+    }
 
 
 
@@ -19,19 +77,27 @@ const Problem1 = () => {
             <div className="row justify-content-center mt-5">
                 <h4 className='text-center text-uppercase mb-5'>Problem-1</h4>
                 <div className="col-6 ">
-                    <form className="row gy-2 gx-3 align-items-center mb-4" >
+                    <form className="row gy-2 gx-3 align-items-center mb-4" onSubmit={handleSubmit}>
                         <div className="col-auto">
                             <input type="text"
                                 className="form-control"
                                 placeholder="Name"
-
+                                value={data.name}
+                                onChange={e => setData({
+                                    ...data,
+                                    name: e.target.value
+                                })}
                             />
                         </div>
                         <div className="col-auto">
                             <input type="text"
                                 className="form-control"
                                 placeholder="Status"
-
+                                value={data.status}
+                                onChange={e => setData({
+                                    ...data,
+                                    status: e.target.value
+                                })}
                             />
                         </div>
                         <div className="col-auto">
@@ -60,6 +126,12 @@ const Problem1 = () => {
                             </tr>
                         </thead>
                         <tbody>
+                            {
+                                SyncronizeData().map((data, index) => <tr key={index}>
+                                    <td scope="col">{data.name}</td>
+                                    <td scope="col">{data.status}</td>
+                                </tr>)
+                            }
 
                         </tbody>
                     </table>
